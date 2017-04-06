@@ -8,18 +8,202 @@
     <packaging>pom</packaging>
     <name>demo</name>
     <url>http://maven.apache.org</url>
-    <description>这是一个夫demo</description>
+    <description>这是一个父demo</description>
+
+    <modules>
+        <module>demo-biz</module>
+        <module>demo-common</module>
+        <module>demo-web</module>
+        <module>../hahaha</module>
+    </modules>
+
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring.version>4.3.6.RELEASE</spring.version>
+        <model.version>1.0.0-SNAPSHOT</model.version>
+        <druid.version>1.0.18</druid.version>
+        <mysql.version>5.1.39</mysql.version>
+        <mybatis.version>1.2.2</mybatis.version>
     </properties>
 
     <dependencies>
+        <!--Log4J-->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.21</version>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
+            <version>4.12</version>
+        </dependency>
+
+        <!--Json解析-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.24</version>
         </dependency>
     </dependencies>
+
+    <!--依赖管理 -->
+    <dependencyManagement>
+        <dependencies>
+            <!--Spring 依赖-->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <!-- 添加模块依赖-->
+            <dependency>
+                <groupId>cn.creditease</groupId>
+                <artifactId>demo-common</artifactId>
+                <version>${model.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.creditease</groupId>
+                <artifactId>demo-biz</artifactId>
+                <version>${model.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.creditease</groupId>
+                <artifactId>demo-web</artifactId>
+                <version>${model.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid</artifactId>
+                <version>${druid.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-jdbc</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis-spring</artifactId>
+                <version>${mybatis.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+    <!--安装插件-->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.8.2</version>
+            </plugin>
+        </plugins>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.xsd</include>
+                    <include>**/*.properties</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
+
+    <profiles>
+        <!--de环境配置-->
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <filters>
+                    <filter>../profiles/demo-dev.properties</filter>
+                </filters>
+            </build>
+        </profile>
+
+        <!--beta环境-->
+        <profile>
+            <id>beta</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <filters>
+                    <filter>profiles/demo-beta.properties</filter>
+                </filters>
+            </build>
+        </profile>
+
+        <!--线上环境-->
+        <profile>
+            <id>online</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <filters>
+                    <filter>profiles/demo-online.properties</filter>
+                </filters>
+
+            </build>
+        </profile>
+    </profiles>
 </project>
