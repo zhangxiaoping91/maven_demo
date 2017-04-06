@@ -14,7 +14,6 @@
         <module>demo-biz</module>
         <module>demo-common</module>
         <module>demo-web</module>
-        <module>../hahaha</module>
     </modules>
 
 
